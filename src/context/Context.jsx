@@ -15,6 +15,7 @@ const ContextProvider = (props) => {
   const [displayButton, setDisplayButton] = useState(true);
   const [resultData, setResultData] = useState("");
   const stopRef = useRef(stop);
+  const [displayLogout, setDisplayLogout] = useState(false);
 
   useEffect(() => {
     localStorage.setItem("prevStoredPrompts", JSON.stringify(prevPrompts));
@@ -111,6 +112,8 @@ const ContextProvider = (props) => {
     newChat,
     displayButton,
     setDisplayButton,
+    displayLogout,
+    setDisplayLogout,
   };
 
   return (

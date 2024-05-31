@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from "react";
+import { useContext, useMemo, useRef, useState } from "react";
 import { assets } from "../../assets/assets";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -12,6 +12,7 @@ import {
   MicNoneOutlined,
   SendOutlined,
   StopCircle,
+  History,
 } from "@mui/icons-material";
 import LogoutCard from "../User/LogoutCard";
 
@@ -42,6 +43,8 @@ const Layout = () => {
     setInput(e.target.value);
   };
 
+  const [show, setShow] = useState(true);
+
   const {
     onSent,
     recentPrompt,
@@ -53,12 +56,14 @@ const Layout = () => {
     pauseOutput,
     displayButton,
     setDisplayButton,
+    setDisplayLogout,
+    displayLogout,
   } = useContext(ApiContext);
 
-  const [displayLogout, setDisplayLogout] = useState(false);
+  const logoutBarRef = useRef();
 
   return (
-    <div className="relative min-h-screen flex-1 overflow-hidden   pb-[15vh]">
+    <div className="relative -ml-12 min-h-screen flex-1 overflow-hidden pb-[15vh] md:ml-0">
       <div className="flex items-center justify-between p-6 text-[22px]">
         <p className="text-[#C9CCCE]">Gemini</p>
         <div className="flex cursor-pointer items-center justify-center gap-6">
@@ -75,6 +80,7 @@ const Layout = () => {
             />
             <p>Try Gemini Advanced</p>
           </a>
+          <History className="mr-6 h-5 w-5" />
           <div className="relative">
             <img
               className="h-10 w-10 rounded-full"
@@ -84,8 +90,12 @@ const Layout = () => {
             />
 
             {displayLogout && (
-              <div className="absolute right-0 top-12 z-10">
-                <LogoutCard />
+              <div className="absolute right-0 top-12 z-50">
+                <LogoutCard
+                  setShow={setShow}
+                  show={show}
+                  logoutBarRef={logoutBarRef}
+                />
               </div>
             )}
           </div>

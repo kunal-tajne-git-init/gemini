@@ -43,11 +43,11 @@ const Sidebar = () => {
       "https://gemini.google.com/advanced",
     ],
     icons: [
-      <PrivacyTipOutlined />,
-      <EventNoteOutlined />,
-      <AnnouncementOutlined />,
-      <QuizOutlined />,
-      <InfoOutlined />,
+      <PrivacyTipOutlined key="privacy" />,
+      <EventNoteOutlined key="event" />,
+      <AnnouncementOutlined key="announcement" />,
+      <QuizOutlined key="quiz" />,
+      <InfoOutlined key="info" />,
     ],
   };
 
@@ -59,9 +59,9 @@ const Sidebar = () => {
       "#",
     ],
     icons: [
-      <ExtensionOutlined />,
-      <InsertLinkOutlined />,
-      <DarkModeOutlined />,
+      <ExtensionOutlined key="extensions" />,
+      <InsertLinkOutlined key="public-links" />,
+      <DarkModeOutlined key="dark-theme" />,
     ],
   };
 
@@ -104,15 +104,15 @@ const Sidebar = () => {
       initial="close"
       animate={containerControls}
     >
-      <div className="relative  flex min-h-screen flex-col justify-between bg-[#1E1F20] p-5 text-white">
+      <div className="relative flex min-h-screen flex-col justify-between bg-[#131314] p-5 text-white md:bg-[#1E1F20]">
         <div>
           <Menu
-            className="m-2 mb-[50px] w-5 cursor-pointer"
+            className="m-2 -ml-2 mb-[50px] mt-3 w-5 cursor-pointer md:ml-0 md:mt-3"
             src={assets.menu_icon}
             onClick={() => setActive(!active)}
           />
           <motion.div
-            className="flex cursor-pointer items-center justify-center gap-1 rounded-[50px] bg-[#1A1A1C] p-2"
+            className={`mr-10 ${active ? "bg-[#1A1A1C]" : ""} flex cursor-pointer items-center justify-center gap-1 rounded-[50px] p-2 md:mr-0 md:bg-[#1A1A1C]`}
             layout
           >
             <svg
@@ -161,8 +161,10 @@ const Sidebar = () => {
                   <p className="mb-[20px] mt-[30px] pl-2">Recent</p>
                   {prevPrompts.map((prompt) => {
                     return (
-                      // eslint-disable-next-line react/jsx-key
-                      <div className="pr-15 ] flex cursor-pointer items-center rounded-3xl px-2 hover:bg-[#272A2C]">
+                      <div
+                        className="pr-15 ] flex cursor-pointer items-center rounded-3xl px-2 hover:bg-[#272A2C]"
+                        key={prompt}
+                      >
                         <ChatBubbleOutline
                           className="m-2 "
                           style={{ fontSize: 16 }}
@@ -245,7 +247,7 @@ const Sidebar = () => {
                 animate="visible"
                 exit="exit"
                 key="Icons"
-                className="relative"
+                className="relative hidden md:block"
               >
                 <div className="absolute left-7 my-1 h-2 w-2 rounded bg-red-400"></div>
                 <DropdownRight data={helpProps}>
