@@ -66,7 +66,7 @@ const LogoutCard = () => {
                   <div className="mt-2 flex items-center gap-2 pb-1">
                     <img
                       className="h-10 w-10 rounded-full"
-                      src={assets.Professional_User}
+                      src={assets.Michael}
                       alt="Professional User"
                     />
                     <div className="flex flex-col justify-center pb-1">
@@ -88,7 +88,7 @@ const LogoutCard = () => {
                   <div className="mt-2 flex items-center gap-2 pb-1">
                     <img
                       className="h-10 w-10 rounded-full"
-                      src={assets.Professional_User}
+                      src={assets.Emily}
                       alt="Professional User"
                     />
                     <div className="flex flex-col justify-center">
@@ -111,7 +111,7 @@ const LogoutCard = () => {
                   <div className="mt-2 flex items-center gap-2 pb-1">
                     <img
                       className="h-10 w-10 rounded-full"
-                      src={assets.Professional_User}
+                      src={assets.Sarah}
                       alt="Professional User"
                     />
                     <div className="flex flex-col justify-center">

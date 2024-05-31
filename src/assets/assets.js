@@ -11,6 +11,9 @@ import send_icon from "./send_icon.png";
 import gemini_icon from "./gemini_icon.png";
 import panda_user_cool from "./panda_user_cool.png";
 import Professional_User from "./Professional_User.png";
+import Emily from "./Emily.png";
+import Michael from "./Michael.png";
+import Sarah from "./Sarah.png";
 
 export const assets = {
   question_icon,
@@ -26,4 +29,7 @@ export const assets = {
   gemini_icon,
   panda_user_cool,
   Professional_User,
+  Emily,
+  Michael,
+  Sarah,
 };
