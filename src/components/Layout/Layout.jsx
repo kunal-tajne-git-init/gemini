@@ -1,53 +1,69 @@
-import React, { useState } from "react";
+import React, { useContext, useMemo, useState } from "react";
 import { assets } from "../../assets/assets";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import Card from "../Card/Card";
+import { ApiContext } from "../../context/Context";
+import cardData from "./CardData";
+import "./layout.css";
+
 import {
-  Explore,
-  Lightbulb,
-  Message,
-  Code,
   AddPhotoAlternateOutlined,
   MicNoneOutlined,
   SendOutlined,
+  StopCircle,
 } from "@mui/icons-material";
-import Card from "../Card/Card";
+
+// Function to shuffle an array
+const shuffleArray = (array) => {
+  const shuffled = array.slice();
+  // Make a copy of the array
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
 
 const Layout = () => {
-  const cardData = [
-    {
-      message: "Suggest beautiful places to see on an upcoming road trip",
-      Icon: Explore,
-    },
-    {
-      message: "Briefly summarize this concept: urban planning",
-      Icon: Lightbulb,
-    },
-    {
-      message: "Brainstorm team bonding activities for our work retreat",
-      Icon: Message,
-    },
-    {
-      message: "Brainstorm team bonding activities for our work retreat",
-      Icon: Code,
-    },
-  ];
+  const randomCards = useMemo(() => {
+    const shuffledData = shuffleArray(cardData);
+    return shuffledData.slice(0, 4);
+  }, []);
 
-  const [inputValue, setInputValue] = useState("");
+  const handleInputChange = (e) => {
+    // Auto-resize the textarea.
+    //This is very important to automatically increase and decrease the height of the textarea where user are typing
+    e.target.style.height = "auto";
+    e.target.style.height = `${e.target.scrollHeight}px`;
 
-  const handleInputChange = (event) => {
-    setInputValue(event.target.value);
-    // Auto-resize the textarea
-    event.target.style.height = "auto";
-    event.target.style.height = `${event.target.scrollHeight}px`;
+    setInput(e.target.value);
   };
 
+  const {
+    onSent,
+    recentPrompt,
+    showResult,
+    loading,
+    resultData,
+    setInput,
+    input,
+    pauseOutput,
+    displayButton,
+    setDisplayButton,
+  } = useContext(ApiContext);
+
+  // const [displayButton, setDisplayButton] = useState(true);
+
   return (
-    <div className="relative min-h-screen flex-1 pb-[15vh]">
-      <div className="z-10 flex items-center justify-between p-6 text-[22px]">
+    <div className="relative min-h-screen flex-1 overflow-hidden   pb-[15vh]">
+      <div className="flex items-center justify-between p-6 text-[22px]">
         <p className="text-[#C9CCCE]">Gemini</p>
         <div className="flex cursor-pointer items-center justify-center gap-6">
           <a
             href="https://one.google.com/explore-plan/gemini-advanced"
-            className="flex items-center justify-center gap-3 rounded-xl bg-[#333637] px-3 py-2 text-sm text-[#E3E3E3]"
+            className=" hidden items-center  justify-center gap-3 rounded-xl bg-[#333637] px-3 py-2 text-sm text-[#E3E3E3] md:flex"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -56,7 +72,7 @@ const Layout = () => {
               src={assets.gemini_icon}
               alt="Gemini Icon"
             />
-            <p className="">Try Gemini Advanced</p>
+            <p>Try Gemini Advanced</p>
           </a>
           <img
             className="h-10 w-10 rounded-full"
@@ -65,39 +81,132 @@ const Layout = () => {
           />
         </div>
       </div>
-      <div className="z-10 m-auto max-w-[900px]">
-        <div className="mx-0 p-5 text-[56px] text-[#c4c7c5]">
-          <p className="-mb-5">
-            <span className="bg-gradient-to-r from-[#4b90ff] to-[#ff5546] bg-clip-text text-transparent">
-              Hello, Explorer!
-            </span>
-          </p>
-          <p className="text-[#454746]">How can I help you today?</p>
-        </div>
-        <div className="grid grid-cols-4 gap-4 p-5 text-[#E3E3E3]">
-          {cardData.map((card) => (
-            <Card key={card.message} message={card.message} Icon={card.Icon} />
-          ))}
-        </div>
-        <div className="flex justify-center">
-          <div className="absolute bottom-8 left-0 right-0 z-20 m-auto flex w-full max-w-[850px] items-center justify-between rounded-full bg-[#1E1F20] p-4 py-5 text-[#BDC1C5]">
+      <div className=" m-auto max-w-[900px]">
+        {!showResult ? (
+          <>
+            {" "}
+            <div className="mx-0 p-5 text-2xl text-[#c4c7c5] md:text-[56px]">
+              <p className="-mb-4 md:mb-0">
+                <span className="bg-gradient-to-r from-[#4b90ff] to-[#ff5546] bg-clip-text text-transparent">
+                  Hello, Explorer!
+                </span>
+              </p>
+              <p className="pt-5 text-[#454746] md:mt-2">
+                How can I help you today?
+              </p>
+            </div>{" "}
+            <div className="mt-20 flex p-5">
+              <div className="m-auto ">
+                {/* Swiper is a library that allows you to create a slider with a lot of customization options. We have used it to create a slider of cards. we can install it by running the command npm install swiper. And then import it in the file where we want to use it. The file import includes the following: import { Swiper, SwiperSlide } from "swiper/react"; import "swiper/css"; */}
+                <Swiper
+                  spaceBetween={10}
+                  slidesPerView={1.2}
+                  speed={300}
+                  loop={true}
+                >
+                  {randomCards.map((card, index) => (
+                    <SwiperSlide
+                      key={index}
+                      className="max-w-[200px] text-white"
+                    >
+                      <Card
+                        message={card.message}
+                        Icon={card.Icon}
+                        onClick={() => {
+                          onSent(card.message);
+                          setDisplayButton(false);
+                          return;
+                        }}
+                      />
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <div>
+              <div className="result relative max-h-[70vh] justify-center overflow-y-scroll px-5  py-0 text-[#E3E3E3]">
+                <div className="flex items-center gap-4 ">
+                  <img
+                    className="h-12 w-12 rounded-full"
+                    src={assets.Professional_User}
+                    alt=""
+                  />
+                  <p>{recentPrompt}</p>
+                </div>
+                <div className="flex items-end space-x-5">
+                  <img
+                    className=" absolute top-10 mt-10 h-12 w-12"
+                    src={assets.gemini_icon}
+                  />
+                  {loading ? (
+                    <>
+                      <div className="loader mt-5 flex w-[750px] flex-col justify-center gap-[10px] pl-10 text-center ">
+                        <hr className=" h-5 rounded-[4px] border-none bg-[#f6f7f8] bg-gradient-to-r from-[#191A1C] via-[#4577DB] to-[#191A1C]" />
+                        <hr className=" h-5 rounded-[4px] border-none bg-[#f6f7f8] bg-gradient-to-r from-[#191A1C] via-[#4577DB] to-[#191A1C]" />
+                        <hr className=" h-5 rounded-[4px] border-none bg-[#f6f7f8] bg-gradient-to-r from-[#191A1C] via-[#4577DB] to-[#191A1C]" />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {" "}
+                      <p
+                        className="mt-2 p-12 text-[17px] font-light leading-7"
+                        dangerouslySetInnerHTML={{ __html: resultData }}
+                      ></p>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        <div className=" absolute bottom-0 m-auto max-h-screen w-full max-w-[900px] px-5 py-0">
+          <div
+            className={` mb-8 flex items-center justify-between gap-5 ${input ? "rounded-xl" : "rounded-full"} bg-[#1E1F20] px-5 py-4 text-[#BDC1C5]`}
+          >
             <textarea
-              className="min-w-[700px] resize-none overflow-hidden rounded-full bg-[#1E1F20] text-[#BDC1C5] outline-none"
+              className="flex-1 resize-none overflow-auto border-none bg-transparent text-sm text-[#BDC1C5] outline-none md:text-lg"
               placeholder="Enter a prompt here"
               rows="1"
-              value={inputValue}
+              value={input}
               onChange={handleInputChange}
               style={{ lineHeight: "1.5", maxHeight: "150px" }}
             />
             <div>
-              <AddPhotoAlternateOutlined className="mr-4 cursor-pointer text-[#E3E3E3]" />
-              <MicNoneOutlined className="mr-4 cursor-pointer text-[#E3E3E3]" />
-              {inputValue && (
-                <SendOutlined className="cursor-pointer text-[#E3E3E3]" />
+              {displayButton && (
+                <>
+                  <AddPhotoAlternateOutlined className="mr-4 cursor-pointer text-[#E3E3E3]" />
+                  <MicNoneOutlined className="mr-4 cursor-pointer text-[#E3E3E3]" />
+                  {input && (
+                    <SendOutlined
+                      onClick={() => {
+                        onSent(input);
+                        setDisplayButton(false);
+                        return;
+                      }}
+                      className="cursor-pointer text-[#E3E3E3]"
+                    />
+                  )}
+                </>
+              )}
+
+              {!displayButton && (
+                <StopCircle
+                  onClick={() => {
+                    pauseOutput();
+                    setDisplayButton(true);
+                    return;
+                  }}
+                  className="cursor-pointer text-[#E3E3E3]"
+                />
               )}
             </div>
           </div>
-          <p className="absolute bottom-2 left-0 right-0 m-auto max-w-[600px] text-center text-[11px]">
+          <p className="absolute bottom-2 left-0 right-0 m-auto text-center text-[6px] text-[#E3E3E3] md:text-[13px]">
             Gemini may display inaccurate info, including about people, so
             double-check its responses.
             <a

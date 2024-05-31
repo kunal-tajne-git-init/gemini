@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { assets } from "../../assets/assets";
 import "../../index.css";
 import { motion, useAnimationControls, AnimatePresence } from "framer-motion";
@@ -20,12 +20,19 @@ import {
   InsertLinkOutlined,
   DarkModeOutlined,
 } from "@mui/icons-material";
+import { ApiContext } from "../../context/Context";
 
 const Sidebar = () => {
   const [active, setActive] = useState(false);
+  const { onSent, prevPrompts, newChat } = useContext(ApiContext);
 
   const containerControls = useAnimationControls();
 
+  const loadPrompt = async (prompt) => {
+    // console.log(prompt);
+    // setRecentPrompt(prompt);
+    await onSent(prompt);
+  };
   const helpProps = {
     options: ["Privacy Hub", "Updates", "Help", "FAQ", "About Gemini Advanced"],
     urls: [
@@ -97,7 +104,7 @@ const Sidebar = () => {
       initial="close"
       animate={containerControls}
     >
-      <div className="z-10 flex min-h-screen flex-col justify-between bg-[#1E1F20] p-5 text-white">
+      <div className="relative  flex min-h-screen flex-col justify-between bg-[#1E1F20] p-5 text-white">
         <div>
           <Menu
             className="m-2 mb-[50px] w-5 cursor-pointer"
@@ -132,6 +139,7 @@ const Sidebar = () => {
                   animate="visible"
                   exit="exit"
                   key="NewChatText"
+                  onClick={() => newChat()}
                 >
                   New Chat
                 </motion.p>
@@ -151,13 +159,20 @@ const Sidebar = () => {
                   key="Recent"
                 >
                   <p className="mb-[20px] mt-[30px] pl-2">Recent</p>
-                  <div className="pr-15 ] flex cursor-pointer items-center rounded-3xl px-2 hover:bg-[#272A2C]">
-                    <ChatBubbleOutline
-                      className="m-2 "
-                      style={{ fontSize: 16 }}
-                    />
-                    <p>What is react Js...</p>
-                  </div>
+                  {prevPrompts.map((prompt) => {
+                    return (
+                      // eslint-disable-next-line react/jsx-key
+                      <div className="pr-15 ] flex cursor-pointer items-center rounded-3xl px-2 hover:bg-[#272A2C]">
+                        <ChatBubbleOutline
+                          className="m-2 "
+                          style={{ fontSize: 16 }}
+                        />
+                        <p onClick={() => loadPrompt(prompt)}>
+                          {prompt.slice(0, 18)}...
+                        </p>
+                      </div>
+                    );
+                  })}
                 </motion.div>
               </>
             )}
