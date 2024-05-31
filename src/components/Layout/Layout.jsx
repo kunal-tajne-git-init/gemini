@@ -13,6 +13,7 @@ import {
   SendOutlined,
   StopCircle,
 } from "@mui/icons-material";
+import LogoutCard from "../User/LogoutCard";
 
 // Function to shuffle an array
 const shuffleArray = (array) => {
@@ -54,7 +55,7 @@ const Layout = () => {
     setDisplayButton,
   } = useContext(ApiContext);
 
-  // const [displayButton, setDisplayButton] = useState(true);
+  const [displayLogout, setDisplayLogout] = useState(false);
 
   return (
     <div className="relative min-h-screen flex-1 overflow-hidden   pb-[15vh]">
@@ -74,11 +75,20 @@ const Layout = () => {
             />
             <p>Try Gemini Advanced</p>
           </a>
-          <img
-            className="h-10 w-10 rounded-full"
-            src={assets.Professional_User}
-            alt="Professional User"
-          />
+          <div className="relative">
+            <img
+              className="h-10 w-10 rounded-full"
+              src={assets.Professional_User}
+              alt="Professional User"
+              onClick={() => setDisplayLogout(!displayLogout)}
+            />
+
+            {displayLogout && (
+              <div className="absolute right-0 top-12 z-10">
+                <LogoutCard />
+              </div>
+            )}
+          </div>
         </div>
       </div>
       <div className=" m-auto max-w-[900px]">
