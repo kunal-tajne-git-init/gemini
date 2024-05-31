@@ -104,15 +104,15 @@ const Sidebar = () => {
       initial="close"
       animate={containerControls}
     >
-      <div className="relative flex min-h-screen flex-col justify-between bg-[#131314] p-5 text-white md:bg-[#1E1F20]">
+      <div className="relative flex min-h-screen flex-col justify-between p-5 text-white md:bg-[#1E1F20] ">
         <div>
           <Menu
-            className="m-2 -ml-2 mb-[50px] mt-3 w-5 cursor-pointer md:ml-0 md:mt-3"
+            className="-ml-2  mb-[50px] mt-3 w-5 cursor-pointer md:ml-2 md:mt-3 "
             src={assets.menu_icon}
             onClick={() => setActive(!active)}
           />
           <motion.div
-            className={`mr-10 ${active ? "bg-[#1A1A1C]" : ""} flex cursor-pointer items-center justify-center gap-1 rounded-[50px] p-2 md:mr-0 md:bg-[#1A1A1C]`}
+            className={`mr-10 ${active ? "bg-[#1A1A1C]" : "hidden"} flex cursor-pointer items-center justify-center gap-1 rounded-[50px] p-2 md:mr-0 md:block md:bg-[#1A1A1C]`}
             layout
           >
             <svg

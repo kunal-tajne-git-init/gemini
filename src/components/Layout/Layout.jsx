@@ -80,7 +80,7 @@ const Layout = () => {
             />
             <p>Try Gemini Advanced</p>
           </a>
-          <History className="mr-6 h-5 w-5" />
+          <History className="mr-6 h-5 w-5 text-white" />
           <div className="relative">
             <img
               className="h-10 w-10 rounded-full"
@@ -115,15 +115,10 @@ const Layout = () => {
                 How can I help you today?
               </p>
             </div>{" "}
-            <div className="mt-20 flex p-5">
-              <div className="m-auto ">
+            <div className="z-50 mt-20 flex p-5">
+              <div className="m-auto">
                 {/* Swiper is a library that allows you to create a slider with a lot of customization options. We have used it to create a slider of cards. we can install it by running the command npm install swiper. And then import it in the file where we want to use it. The file import includes the following: import { Swiper, SwiperSlide } from "swiper/react"; import "swiper/css"; */}
-                <Swiper
-                  spaceBetween={10}
-                  slidesPerView={1.2}
-                  speed={300}
-                  loop={true}
-                >
+                <Swiper spaceBetween={10} slidesPerView={2} speed={500}>
                   {randomCards.map((card, index) => (
                     <SwiperSlide
                       key={index}
