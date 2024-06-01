@@ -37,7 +37,7 @@ const LogoutCard = ({ show, setShow, logoutBarRef }) => {
     <>
       {displayLogout && (
         <div
-          className=" flex min-w-[150px] max-w-[500px] flex-col rounded-2xl bg-[#272A2C] pb-4 text-[#E3E3E3] md:min-w-[400px]"
+          className=" flex min-w-[150px] max-w-[500px] flex-col rounded-2xl bg-[#282A2C] pb-4 text-[#E3E3E3] md:min-w-[400px]"
           ref={logoutBarRef}
         >
           <div className="relative mt-5 flex flex-col items-center space-y-3">

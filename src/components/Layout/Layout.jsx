@@ -80,7 +80,10 @@ const Layout = () => {
             />
             <p>Try Gemini Advanced</p>
           </a>
-          <History className="mr-6 h-5 w-5 text-white" />
+          <History
+            className="mr-6 h-5 w-5 text-white"
+            sx={{ display: { xs: "block", md: "none" } }}
+          />
           <div className="relative">
             <img
               className="h-10 w-10 rounded-full"
