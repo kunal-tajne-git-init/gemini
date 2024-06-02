@@ -39,7 +39,7 @@ const ContextProvider = (props) => {
     setShowResult(true);
     stopRef.current = false;
     setPrevPrompts((prevPrompts) => {
-      const filteredPrompts = prevPrompts.filter(
+      const filteredPrompts = prevPrompts?.filter(
         (existingPrompt) => existingPrompt === prompt,
       );
       if (filteredPrompts.length === 0) {
