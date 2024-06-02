@@ -173,25 +173,26 @@ const Sidebar = () => {
                   key="Recent"
                 >
                   <p className="mb-[20px] mt-[30px] pl-2">Recent</p>
-                  {prevPrompts
-                    .slice(-10)
-                    .reverse()
-                    .map((prompt) => {
-                      return (
-                        <div
-                          className="pr-15 ] flex cursor-pointer items-center rounded-3xl px-2 hover:bg-[#272A2C]"
-                          key={prompt}
-                        >
-                          <ChatBubbleOutline
-                            className="m-2 "
-                            style={{ fontSize: 16 }}
-                          />
-                          <p onClick={() => loadPrompt(prompt)}>
-                            {prompt.slice(0, 18)}...
-                          </p>
-                        </div>
-                      );
-                    })}
+                  {prevPrompts &&
+                    prevPrompts
+                      .slice(-10)
+                      .reverse()
+                      .map((prompt) => {
+                        return (
+                          <div
+                            className="pr-15 ] flex cursor-pointer items-center rounded-3xl px-2 hover:bg-[#272A2C]"
+                            key={prompt}
+                          >
+                            <ChatBubbleOutline
+                              className="m-2 "
+                              style={{ fontSize: 16 }}
+                            />
+                            <p onClick={() => loadPrompt(prompt)}>
+                              {prompt.slice(0, 18)}...
+                            </p>
+                          </div>
+                        );
+                      })}
                 </motion.div>
               </>
             )}

@@ -109,6 +109,13 @@ const Layout = () => {
     dispatch(logout());
   };
 
+  const handleRef = () => {
+    if (logoutBarRef.current) {
+      // Example: Change the text of the button
+      logoutBarRef.current.textContent = "Logout";
+    }
+  };
+
   return (
     <div className="relative -ml-12 min-h-screen flex-1 overflow-hidden pb-[15vh] md:ml-0">
       <div className="flex items-center justify-between p-6 text-[22px]">
