@@ -21,16 +21,18 @@ import {
   DarkModeOutlined,
 } from "@mui/icons-material";
 import { ApiContext } from "../../context/Context";
+import { useSelector } from "react-redux";
 
 const Sidebar = () => {
   const [active, setActive] = useState(false);
-  const { onSent, prevPrompts, newChat } = useContext(ApiContext);
+  const { onSent, prevPrompts, newChat, setPrevPrompts } =
+    useContext(ApiContext);
+  const userEmail = useSelector((state) => state.userDetails.userEmail);
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   const containerControls = useAnimationControls();
 
   const loadPrompt = async (prompt) => {
-    // console.log(prompt);
-    // setRecentPrompt(prompt);
     await onSent(prompt);
   };
   const helpProps = {
@@ -98,6 +100,18 @@ const Sidebar = () => {
     }
   }, [active, containerControls]);
 
+  useEffect(() => {
+    let storedPrompts;
+    if (isAuthenticated && userEmail) {
+      storedPrompts = localStorage.getItem(`${userEmail}prevPrompts`);
+    } else {
+      storedPrompts = localStorage.getItem("prevPrompts");
+    }
+    if (storedPrompts) {
+      setPrevPrompts(JSON.parse(storedPrompts));
+    }
+  }, [isAuthenticated, userEmail, setPrevPrompts]);
+
   return (
     <motion.nav
       variants={containerVariants}
@@ -112,7 +126,7 @@ const Sidebar = () => {
             onClick={() => setActive(!active)}
           />
           <motion.div
-            className={`mr-10 ${active ? "bg-[#1A1A1C]" : "hidden"} flex cursor-pointer items-center justify-center gap-1 rounded-[50px] p-2 md:mr-0 md:block md:bg-[#1A1A1C]`}
+            className={`mr-10 ${active ? "bg-[#1A1A1C]" : "hidden"} flex cursor-pointer items-center justify-center gap-1 rounded-[50px] p-2 md:mr-0 md:flex md:bg-[#1A1A1C]`}
             layout
           >
             <svg
@@ -159,22 +173,25 @@ const Sidebar = () => {
                   key="Recent"
                 >
                   <p className="mb-[20px] mt-[30px] pl-2">Recent</p>
-                  {prevPrompts.map((prompt) => {
-                    return (
-                      <div
-                        className="pr-15 ] flex cursor-pointer items-center rounded-3xl px-2 hover:bg-[#272A2C]"
-                        key={prompt}
-                      >
-                        <ChatBubbleOutline
-                          className="m-2 "
-                          style={{ fontSize: 16 }}
-                        />
-                        <p onClick={() => loadPrompt(prompt)}>
-                          {prompt.slice(0, 18)}...
-                        </p>
-                      </div>
-                    );
-                  })}
+                  {prevPrompts
+                    .slice(-10)
+                    .reverse()
+                    .map((prompt) => {
+                      return (
+                        <div
+                          className="pr-15 ] flex cursor-pointer items-center rounded-3xl px-2 hover:bg-[#272A2C]"
+                          key={prompt}
+                        >
+                          <ChatBubbleOutline
+                            className="m-2 "
+                            style={{ fontSize: 16 }}
+                          />
+                          <p onClick={() => loadPrompt(prompt)}>
+                            {prompt.slice(0, 18)}...
+                          </p>
+                        </div>
+                      );
+                    })}
                 </motion.div>
               </>
             )}

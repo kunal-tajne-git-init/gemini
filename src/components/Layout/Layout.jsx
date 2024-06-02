@@ -1,4 +1,4 @@
-import { useContext, useMemo, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { assets } from "../../assets/assets";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -6,6 +6,7 @@ import Card from "../Card/Card";
 import { ApiContext } from "../../context/Context";
 import cardData from "./CardData";
 import "./layout.css";
+import { logout, login, setAuthState } from "../../store/authSlice";
 
 import {
   AddPhotoAlternateOutlined,
@@ -13,8 +14,13 @@ import {
   SendOutlined,
   StopCircle,
   History,
+  VerifiedOutlined,
+  CloseOutlined,
 } from "@mui/icons-material";
 import LogoutCard from "../User/LogoutCard";
+import authService from "../../appwrite/auth";
+import { useDispatch, useSelector } from "react-redux";
+import { setInitialState, setUserDetails } from "../../store/userDetailsSlice";
 
 // Function to shuffle an array
 const shuffleArray = (array) => {
@@ -44,6 +50,15 @@ const Layout = () => {
   };
 
   const [show, setShow] = useState(true);
+  const [updateBar, setUpdateBar] = useState(true);
+  // const [userDetails, setUserDetails] = useState(null);
+  const dispatch = useDispatch();
+
+  const logoutBarRef = useRef();
+
+  const { isAuthenticated } = useSelector((state) => state.auth);
+  const userName = useSelector((state) => state.userDetails.userName);
+  const [currUserName, setCurrUserName] = useState("Explorer!");
 
   const {
     onSent,
@@ -60,7 +75,39 @@ const Layout = () => {
     displayLogout,
   } = useContext(ApiContext);
 
-  const logoutBarRef = useRef();
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      const user = await authService.getCurrentUser();
+      const userLocal = localStorage.getItem("user");
+
+      if (userLocal) {
+        const userLocalData = JSON.parse(userLocal);
+        const { name, email } = userLocalData;
+        console.log("Data", name, email);
+        dispatch(setAuthState({ isAuthenticated: true, user: userLocalData }));
+        dispatch(setInitialState({ name, email }));
+      } else if (user) {
+        dispatch(login(user));
+        const user = await authService.getUserDetails();
+        dispatch(setUserDetails(user?.name, user?.email));
+      }
+    };
+    fetchUserDetails();
+  }, []);
+
+  useEffect(() => {
+    setCurrUserName(userName);
+  }, [isAuthenticated, userName]);
+
+  const handleLogin = async () => {
+    const user = await authService.login();
+    dispatch(login(user));
+  };
+
+  const handleLogout = () => {
+    authService.logout();
+    dispatch(logout());
+  };
 
   return (
     <div className="relative -ml-12 min-h-screen flex-1 overflow-hidden pb-[15vh] md:ml-0">
@@ -95,15 +142,41 @@ const Layout = () => {
             {displayLogout && (
               <div className="absolute right-0 top-12 z-50">
                 <LogoutCard
+                  isAuthenticated={!isAuthenticated}
                   setShow={setShow}
                   show={show}
                   logoutBarRef={logoutBarRef}
+                  handleLogin={handleLogin}
+                  handleLogout={handleLogout}
                 />
               </div>
             )}
           </div>
         </div>
       </div>
+      {updateBar && (
+        <div className="relative flex items-center justify-center gap-1 bg-[#041E49] py-1">
+          <VerifiedOutlined
+            className=" text-white"
+            sx={{ height: 20, width: 20 }}
+          />
+          <p className="text-center text-[#E3E3E3]">
+            Gemini has just been updated.{" "}
+            <a
+              href="https://gemini.google.com/updates"
+              target="_blank"
+              className="underline"
+            >
+              See update
+            </a>
+          </p>
+          <CloseOutlined
+            className=" absolute right-3 cursor-pointer text-white"
+            onClick={() => setUpdateBar(!updateBar)}
+          />
+        </div>
+      )}
+
       <div className=" m-auto max-w-[900px]">
         {!showResult ? (
           <>
@@ -111,7 +184,7 @@ const Layout = () => {
             <div className="mx-0 p-5 text-2xl text-[#c4c7c5] md:text-[56px]">
               <p className="-mb-4 md:mb-0">
                 <span className="bg-gradient-to-r from-[#4b90ff] to-[#ff5546] bg-clip-text text-transparent">
-                  Hello, Explorer!
+                  Hello, {currUserName}
                 </span>
               </p>
               <p className="pt-5 text-[#454746] md:mt-2">
