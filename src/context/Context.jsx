@@ -42,7 +42,7 @@ const ContextProvider = (props) => {
       const filteredPrompts = prevPrompts?.filter(
         (existingPrompt) => existingPrompt === prompt,
       );
-      if (filteredPrompts.length === 0) {
+      if (filteredPrompts?.length === 0) {
         return [...prevPrompts, prompt];
       }
       return prevPrompts;
