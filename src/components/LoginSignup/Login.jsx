@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import authService from "../../appwrite/auth";
@@ -9,6 +9,8 @@ import { login as authLogin } from "../../store/authSlice";
 import { Clear } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { setUserDetails } from "../../store/userDetailsSlice";
+import { ApiContext } from "../../context/Context";
+import { Circles } from "react-loader-spinner";
 
 function Login({ setLogin }) {
   const dispatch = useDispatch();
@@ -16,9 +18,12 @@ function Login({ setLogin }) {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  const { loginLoader, setLoginLoader } = useContext(ApiContext);
+
   const login = async (data) => {
     setError("");
     try {
+      setLoginLoader(true);
       const session = await authService.login(data);
       if (session) {
         const userData = await authService.getCurrentUser();
@@ -49,7 +54,7 @@ function Login({ setLogin }) {
               }),
             );
         }
-
+        setLoginLoader(false);
         navigate("/");
       }
     } catch (error) {
@@ -98,9 +103,15 @@ function Login({ setLogin }) {
                 required: true,
               })}
             />
-            <Button type="submit" className="w-full">
-              Sign in
-            </Button>
+            {!loginLoader ? (
+              <Button type="submit" className="w-full">
+                Sign in
+              </Button>
+            ) : (
+              <div className="flex items-center justify-center">
+                <Circles height="40" width="40" />
+              </div>
+            )}
           </div>
         </form>
       </div>

@@ -20,6 +20,8 @@ const ContextProvider = (props) => {
     "https://cloud.appwrite.io/v1/storage/buckets/665a6f08001eafd6e54b/files/665cfb3f00312139e5ee/view?project=665a6b2000327e024ac1",
   );
 
+  const [loginLoader, setLoginLoader] = useState(false);
+
   useEffect(() => {
     if (isAuthenticated) {
       localStorage.setItem(
@@ -115,6 +117,8 @@ const ContextProvider = (props) => {
     setDisplayLogout,
     fileUrl,
     setFileUrl,
+    loginLoader,
+    setLoginLoader,
   };
 
   return (

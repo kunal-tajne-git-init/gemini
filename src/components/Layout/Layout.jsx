@@ -20,8 +20,7 @@ import {
 import LogoutCard from "../User/LogoutCard";
 import authService from "../../appwrite/auth";
 import { useDispatch, useSelector } from "react-redux";
-import { setInitialState, setUserDetails } from "../../store/userDetailsSlice";
-import { set } from "react-hook-form";
+import { setInitialState } from "../../store/userDetailsSlice";
 
 // Function to shuffle an array
 const shuffleArray = (array) => {
@@ -115,7 +114,9 @@ const Layout = () => {
 
   const handleLogin = async () => {
     const user = await authService.login();
-    dispatch(login(user));
+    if (user) {
+      dispatch(login(user));
+    }
   };
 
   const handleLogout = () => {
