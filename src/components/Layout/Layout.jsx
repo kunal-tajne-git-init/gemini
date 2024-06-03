@@ -90,11 +90,14 @@ const Layout = () => {
 
         if (currUserData) {
           const { name, email, hasProfile, fileId } = currUserData;
-          setFileId(fileId);
-          setFileUrl(
-            `https://cloud.appwrite.io/v1/storage/buckets/665a6f08001eafd6e54b/files/${fileId}/view?project=665a6b2000327e024ac1`,
-          );
 
+          setFileId(fileId);
+
+          if (fileId) {
+            setFileUrl(
+              `https://cloud.appwrite.io/v1/storage/buckets/665a6f08001eafd6e54b/files/${fileId}/view?project=665a6b2000327e024ac1`,
+            );
+          }
           console.log("Data", currUserData);
           dispatch(
             setAuthState({ isAuthenticated: true, user: userLocalData }),
@@ -102,21 +105,11 @@ const Layout = () => {
           dispatch(setInitialState({ name, email, hasProfile, fileId }));
         }
       }
-      // else if (user) {
-      //   dispatch(login(user));
-      //   const user = await authService.getUserDetails();
-      //   dispatch(setUserDetails(user?.name, user?.email));
-      // }
     };
     fetchUserDetails();
   }, [setFileUrl, dispatch, setFileId]);
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      setFileUrl(
-        "https://cloud.appwrite.io/v1/storage/buckets/665a6f08001eafd6e54b/files/665cfb3f00312139e5ee/view?project=665a6b2000327e024ac1",
-      );
-    }
     setCurrUserName(userName);
   }, [isAuthenticated, userName, setFileUrl]);
 
