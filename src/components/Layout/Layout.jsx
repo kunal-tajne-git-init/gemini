@@ -21,6 +21,7 @@ import LogoutCard from "../User/LogoutCard";
 import authService from "../../appwrite/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { setInitialState, setUserDetails } from "../../store/userDetailsSlice";
+import { set } from "react-hook-form";
 
 // Function to shuffle an array
 const shuffleArray = (array) => {
@@ -99,6 +100,10 @@ const Layout = () => {
             setAuthState({ isAuthenticated: true, user: userLocalData }),
           );
           dispatch(setInitialState({ name, email, hasProfile, fileId }));
+        } else {
+          setFileUrl(
+            "https://cloud.appwrite.io/v1/storage/buckets/665a6f08001eafd6e54b/files/665cfb3f00312139e5ee/view?project=665a6b2000327e024ac1",
+          );
         }
       }
       // else if (user) {
@@ -108,7 +113,7 @@ const Layout = () => {
       // }
     };
     fetchUserDetails();
-  }, []);
+  }, [setFileUrl, dispatch, setFileId]);
 
   useEffect(() => {
     setCurrUserName(userName);
