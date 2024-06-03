@@ -31,8 +31,9 @@ import {
 } from "../../store/userDetailsSlice.js";
 import conf from "../../conf/conf.js";
 
-const LogoutCard = ({ show, setShow, handleLogin, fileId, setFileId }) => {
-  const { displayLogout, fileUrl, setFileUrl } = useContext(ApiContext);
+const LogoutCard = ({ show, setShow, handleLogin }) => {
+  const { displayLogout, fileUrl, setFileUrl, fileId, setFileId } =
+    useContext(ApiContext);
   const [signup, setSignup] = useState(false);
   const [login, setLogin] = useState(false);
   const [showModal, setShowModal] = useState(false); // State to control the modal visibility

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import authService from "../../appwrite/auth";
@@ -11,6 +11,8 @@ import Login from "./Login";
 import { Box, Modal } from "@mui/material";
 import { login } from "../../store/authSlice";
 import { setUserDetails } from "../../store/userDetailsSlice";
+import { ApiContext } from "../../context/Context";
+import { Circles } from "react-loader-spinner";
 
 const Signup = ({ setSignup, setLogin, loginDialogue }) => {
   const [error, setError] = useState(null);
@@ -27,9 +29,11 @@ const Signup = ({ setSignup, setLogin, loginDialogue }) => {
     p: 4,
   };
 
+  const { setLoginLoader, loginLoader } = useContext(ApiContext);
+
   const create = async (data) => {
     setError("");
-
+    setLoginLoader(true);
     try {
       const registerUser = await authService.createAccount(data);
 
@@ -54,13 +58,14 @@ const Signup = ({ setSignup, setLogin, loginDialogue }) => {
             JSON.stringify(currUserData),
           );
         }
-
+        setLoginLoader(false);
         // console.log(currUserData);
 
         navigate("/");
       }
     } catch (error) {
       setError(error.message || "An error occurred"); // Convert the error object to a string
+      setLoginLoader(false);
     }
   };
 
@@ -137,9 +142,15 @@ const Signup = ({ setSignup, setLogin, loginDialogue }) => {
               })}
             />
 
-            <Button type="submit" className="w-full">
-              Create Account
-            </Button>
+            {!loginLoader ? (
+              <Button type="submit" className="w-full">
+                Create Account
+              </Button>
+            ) : (
+              <div className="flex items-center justify-center">
+                <Circles height="40" width="40" />
+              </div>
+            )}
           </div>
         </form>
       </div>

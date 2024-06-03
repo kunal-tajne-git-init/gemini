@@ -18,7 +18,7 @@ function Login({ setLogin }) {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const { loginLoader, setLoginLoader } = useContext(ApiContext);
+  const { loginLoader, setLoginLoader, setFileId } = useContext(ApiContext);
 
   const login = async (data) => {
     setError("");
@@ -35,7 +35,7 @@ function Login({ setLogin }) {
           const userDetails = JSON.parse(
             localStorage.getItem(email + "userDetails"),
           );
-          if (userDetails.hasProfile)
+          if (userDetails.hasProfile) {
             dispatch(
               setUserDetails({
                 name,
@@ -44,7 +44,8 @@ function Login({ setLogin }) {
                 fileId: userDetails.fileId,
               }),
             );
-          else
+            setFileId(userDetails.fileId);
+          } else {
             dispatch(
               setUserDetails({
                 name,
@@ -53,12 +54,15 @@ function Login({ setLogin }) {
                 fileId: "665cfb3f00312139e5ee",
               }),
             );
+            setFileId("665cfb3f00312139e5ee");
+          }
         }
         setLoginLoader(false);
         navigate("/");
       }
     } catch (error) {
       setError(error.message);
+      setLoginLoader(false);
     }
   };
 

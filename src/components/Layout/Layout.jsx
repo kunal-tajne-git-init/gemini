@@ -51,7 +51,6 @@ const Layout = () => {
 
   const [show, setShow] = useState(true);
   const [updateBar, setUpdateBar] = useState(true);
-  const [fileId, setFileId] = useState();
   // const [userDetails, setUserDetails] = useState(null);
   const dispatch = useDispatch();
 
@@ -74,6 +73,7 @@ const Layout = () => {
     displayLogout,
     fileUrl,
     setFileUrl,
+    setFileId,
   } = useContext(ApiContext);
 
   useEffect(() => {
@@ -162,8 +162,8 @@ const Layout = () => {
                   show={show}
                   handleLogin={handleLogin}
                   handleLogout={handleLogout}
-                  fileId={fileId}
-                  setFileId={setFileId}
+                  // fileId={fileId}
+                  // setFileId={setFileId}
                 />
               </div>
             )}

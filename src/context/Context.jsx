@@ -21,6 +21,7 @@ const ContextProvider = (props) => {
   );
 
   const [loginLoader, setLoginLoader] = useState(false);
+  const [fileId, setFileId] = useState();
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -119,6 +120,8 @@ const ContextProvider = (props) => {
     setFileUrl,
     loginLoader,
     setLoginLoader,
+    fileId,
+    setFileId,
   };
 
   return (
