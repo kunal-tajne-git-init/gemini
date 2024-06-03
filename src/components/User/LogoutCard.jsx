@@ -163,7 +163,7 @@ const LogoutCard = ({ show, setShow, handleLogin, fileId, setFileId }) => {
         "https://cloud.appwrite.io/v1/storage/buckets/665a6f08001eafd6e54b/files/665cfb3f00312139e5ee/view?project=665a6b2000327e024ac1",
       );
     }
-  }, [fileId, isAuthenticated, hasProfile, userEmail, setFileUrl]);
+  }, [fileId, isAuthenticated, hasProfile, userEmail]);
 
   return (
     <>

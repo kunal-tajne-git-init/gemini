@@ -20,7 +20,7 @@ import {
 import LogoutCard from "../User/LogoutCard";
 import authService from "../../appwrite/auth";
 import { useDispatch, useSelector } from "react-redux";
-import { setInitialState } from "../../store/userDetailsSlice";
+import { setInitialState, setUserDetails } from "../../store/userDetailsSlice";
 
 // Function to shuffle an array
 const shuffleArray = (array) => {
@@ -56,7 +56,7 @@ const Layout = () => {
   const dispatch = useDispatch();
 
   const { isAuthenticated } = useSelector((state) => state.auth);
-  // const userName = useSelector((state) => state.userDetails.userName);
+  const userName = useSelector((state) => state.userDetails.userName);
   const [currUserName, setCurrUserName] = useState("Explorer!");
 
   const {
@@ -94,16 +94,12 @@ const Layout = () => {
             `https://cloud.appwrite.io/v1/storage/buckets/665a6f08001eafd6e54b/files/${fileId}/view?project=665a6b2000327e024ac1`,
           );
 
-          setCurrUserName(name);
-
           console.log("Data", currUserData);
           dispatch(
             setAuthState({ isAuthenticated: true, user: userLocalData }),
           );
           dispatch(setInitialState({ name, email, hasProfile, fileId }));
         }
-      } else {
-        setCurrUserName("Explorer!");
       }
       // else if (user) {
       //   dispatch(login(user));
@@ -112,11 +108,11 @@ const Layout = () => {
       // }
     };
     fetchUserDetails();
-  }, [dispatch, setCurrUserName, setFileId, setFileUrl, isAuthenticated]);
+  }, []);
 
-  // useEffect(() => {
-  //   setCurrUserName(userName);
-  // }, [isAuthenticated, userName]);
+  useEffect(() => {
+    setCurrUserName(userName);
+  }, [isAuthenticated, userName]);
 
   // const handleInput = () => {
   //   console.log("Input", input);
@@ -228,7 +224,11 @@ const Layout = () => {
                       key={index}
                       className="max-w-[200px] text-white"
                     >
-                      <Card message={card.message} Icon={card.Icon} />
+                      <Card
+                        message={card.message}
+                        Icon={card.Icon}
+                        // onClick={handleInput}
+                      />
                     </SwiperSlide>
                   ))}
                 </Swiper>
