@@ -10,6 +10,7 @@ import { Clear } from "@mui/icons-material";
 import Login from "./Login";
 import { Box, Modal } from "@mui/material";
 import { login } from "../../store/authSlice";
+import { setUserDetails } from "../../store/userDetailsSlice";
 
 const Signup = ({ setSignup, setLogin, loginDialogue }) => {
   const [error, setError] = useState(null);
@@ -35,7 +36,21 @@ const Signup = ({ setSignup, setLogin, loginDialogue }) => {
       if (registerUser) {
         const currUserData = await authService.getCurrentUser();
 
-        if (currUserData) dispatch(login({ currUserData }));
+        if (currUserData) {
+          dispatch(login(currUserData));
+          const email = currUserData.email;
+          const name = currUserData.name;
+          dispatch(
+            setUserDetails({
+              email,
+              name,
+              hasProfile: false,
+              fileId: "665cfb3f00312139e5ee",
+            }),
+          );
+        }
+
+        // console.log(currUserData);
 
         navigate("/");
       }
@@ -116,6 +131,7 @@ const Signup = ({ setSignup, setLogin, loginDialogue }) => {
                 required: true,
               })}
             />
+
             <Button type="submit" className="w-full">
               Create Account
             </Button>

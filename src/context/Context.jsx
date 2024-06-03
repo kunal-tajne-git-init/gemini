@@ -1,18 +1,35 @@
-import { createContext, useState, useRef } from "react";
+import { createContext, useState, useRef, useEffect } from "react";
 import geminiRun from "../config/gemini";
+import { useSelector } from "react-redux";
 
 export const ApiContext = createContext();
 
 const ContextProvider = (props) => {
   const [input, setInput] = useState("");
   const [recentPrompt, setRecentPrompt] = useState("");
-  const [prevPrompts, setPrevPrompts] = useState();
+  const [prevPrompts, setPrevPrompts] = useState(["Welcome to Gemini!"]);
   const [showResult, setShowResult] = useState(false);
   const [loading, setLoading] = useState(false);
   const [displayButton, setDisplayButton] = useState(true);
   const [resultData, setResultData] = useState("");
   const stopRef = useRef(stop);
   const [displayLogout, setDisplayLogout] = useState(false);
+  const { isAuthenticated } = useSelector((state) => state.auth);
+  const { userEmail } = useSelector((state) => state.userDetails);
+  const [fileUrl, setFileUrl] = useState(
+    "https://cloud.appwrite.io/v1/storage/buckets/665a6f08001eafd6e54b/files/665cfb3f00312139e5ee/view?project=665a6b2000327e024ac1",
+  );
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      localStorage.setItem(
+        userEmail + "prevPrompts",
+        JSON.stringify(prevPrompts),
+      );
+    } else {
+      localStorage.setItem("prevPrompts", JSON.stringify(prevPrompts));
+    }
+  }, [prevPrompts, isAuthenticated, userEmail]);
 
   const delayPara = (index, nextWord, totalLength) => {
     setTimeout(() => {
@@ -96,6 +113,8 @@ const ContextProvider = (props) => {
     setDisplayButton,
     displayLogout,
     setDisplayLogout,
+    fileUrl,
+    setFileUrl,
   };
 
   return (

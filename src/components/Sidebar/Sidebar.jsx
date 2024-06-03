@@ -103,12 +103,16 @@ const Sidebar = () => {
   useEffect(() => {
     let storedPrompts;
     if (isAuthenticated && userEmail) {
-      storedPrompts = localStorage.getItem(`${userEmail}prevPrompts`);
+      storedPrompts = localStorage.getItem(userEmail + "prevPrompts");
     } else {
       storedPrompts = localStorage.getItem("prevPrompts");
     }
     if (storedPrompts) {
-      setPrevPrompts(JSON.parse(storedPrompts));
+      try {
+        setPrevPrompts(JSON.parse(storedPrompts));
+      } catch (error) {
+        console.error("Error parsing stored prompts:", error);
+      }
     }
   }, [isAuthenticated, userEmail, setPrevPrompts]);
 

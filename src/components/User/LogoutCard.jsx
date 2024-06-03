@@ -1,7 +1,8 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { assets } from "../../assets/assets";
 import { Modal } from "@mui/base/Modal";
 import { logout } from "../../store/authSlice";
+import profileStorageService from "../../appwrite/storage.js";
 
 import {
   Accordion,
@@ -22,39 +23,99 @@ import Signup from "../LoginSignup/Signup";
 import { useDispatch, useSelector } from "react-redux";
 import authService from "../../appwrite/auth";
 import { useNavigate } from "react-router-dom";
+import FileModal from "./FileModal.jsx";
+import {
+  setUserDetails,
+  resetUserDetails,
+} from "../../store/userDetailsSlice.js";
+import conf from "../../conf/conf.js";
 
-const LogoutCard = ({ show, setShow, logoutBarRef, handleLogin }) => {
-  const { displayLogout } = useContext(ApiContext);
+const LogoutCard = ({ show, setShow, handleLogin, fileId, setFileId }) => {
+  const { displayLogout, fileUrl, setFileUrl } = useContext(ApiContext);
   const [signup, setSignup] = useState(false);
   const [login, setLogin] = useState(false);
+  const [showModal, setShowModal] = useState(false); // State to control the modal visibility
+  const [uploadStatus, setUploadStatus] = useState("");
+  const [file, setFile] = useState();
+  // const [fileId, setFileId] = useState();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { resetUserDetails } = useSelector((state) => state.userDetails);
+  // const [fileUrl, setFileUrl] = useState();
+
+  const { hasProfile } = useSelector((state) => state.userDetails);
   const { isAuthenticated } = useSelector((state) => state.auth);
 
   const userName = useSelector((state) => state.userDetails.userName);
   const userEmail = useSelector((state) => state.userDetails.userEmail);
 
-  const { prevPrompts } = useContext(ApiContext); // Get the context here
+  const fileInputRef = useRef(); // Ref to the hidden file input
 
   const handleLogout = async () => {
-    if (userEmail) {
-      localStorage.setItem(
-        `${userEmail}prevPrompts`,
-        JSON.stringify(prevPrompts),
-      );
-    } else {
-      localStorage.setItem("prevPrompts", JSON.stringify(prevPrompts));
-    }
     dispatch(logout());
     await authService.logout();
     dispatch(resetUserDetails());
     navigate("/");
+    // setFileId("665cfb3f00312139e5ee");
   };
 
-  console.log("Username: ", userName);
-  console.log("UserEmail: ", userEmail);
+  const handleUpload = async () => {
+    if (file) {
+      // Check if a file is selected
+      try {
+        setUploadStatus("Uploading..."); // Update the status to "Uploading..."
+        const response = await profileStorageService.uploadFile(file); // Call the uploadFile method from storageService
+        // // Get the file ID from the response
+        // console.log("File ID: ", response?.$id);
+
+        // // Update the user details in the Redux store
+
+        if (response) {
+          const currFileId = response?.$id;
+
+          setFileId(currFileId);
+
+          dispatch(
+            setUserDetails({
+              name: userName,
+              email: userEmail,
+              fileId: currFileId,
+              hasProfile: true,
+            }),
+          );
+          // Check if the response is valid
+          setUploadStatus("Upload successful!"); // Update the status to "Upload successful!"
+          setShowModal(false);
+        } else {
+          setUploadStatus("Upload failed."); // Update the status to "Upload failed."
+        }
+      } catch (error) {
+        setUploadStatus("Upload failed."); // Update the status to "Upload failed." in case of an error
+        console.error("Error uploading file:", error); // Log the error
+      }
+    } else {
+      console.log("No file selected"); // Log if no file is selected
+      setUploadStatus("No file selected"); // Update the status to "No file selected"
+    }
+  };
+
+  const handleClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false); // Hide the modal
+    setFile(null); // Reset the file state
+  };
+
+  const handleFileChange = (event) => {
+    if (event.target.files.length > 0) {
+      // Check if a file is selected
+      const selectedFile = event.target.files[0]; // Get the selected file
+      setFile(selectedFile); // Set the file object state
+      setShowModal(true); // Show the modal with the selected file preview
+    }
+  };
 
   const style = {
     position: "absolute",
@@ -65,13 +126,49 @@ const LogoutCard = ({ show, setShow, logoutBarRef, handleLogin }) => {
     p: 4,
   };
 
+  useEffect(() => {
+    if (isAuthenticated && hasProfile) {
+      // const fetchFile = async () => {
+      //   const currLocalStorage = JSON.parse(
+      //     localStorage.getItem(userEmail + "userDetails"),
+      //   );
+
+      //   const currUserFileId = currLocalStorage.fileId;
+      //   // setFileId(currUserFileId);
+
+      //   const response = await profileStorageService.getFiles({
+      //     fileId: currUserFileId,
+      //   });
+
+      // console.log("Curr User File ID: ", response);
+
+      // const url = `https://cloud.appwrite.io/v1/storage/buckets/${conf.appwriteBucketId}/files/${fileId}/view?project=${conf.appwriteProjectId}`;
+
+      const bucketId = conf.appwriteBucketId;
+      const projectId = conf.appwriteProjectId;
+
+      if (bucketId && projectId && fileId) {
+        const url = `https://cloud.appwrite.io/v1/storage/buckets/${bucketId}/files/${fileId}/view?project=${projectId}`;
+        setFileUrl(url);
+      }
+
+      // const url = `https://cloud.appwrite.io/v1/storage/buckets/665a6f08001eafd6e54b/files/665d3c31000cdda489c8/view?project=665a6b2000327e024ac1`;
+
+      //   console.log("File: ", fileId);
+      // };
+
+      // fetchFile();
+    } else {
+      setFileUrl(
+        "https://cloud.appwrite.io/v1/storage/buckets/665a6f08001eafd6e54b/files/665cfb3f00312139e5ee/view?project=665a6b2000327e024ac1",
+      );
+    }
+  }, [fileId, isAuthenticated, hasProfile, userEmail, setFileUrl]);
+
   return (
     <>
       {displayLogout && (
-        <div
-          className=" flex min-w-[150px] max-w-[500px] flex-col rounded-2xl bg-[#282A2C] pb-4 text-[#E3E3E3] md:min-w-[400px]"
-          ref={logoutBarRef}
-        >
+        <div className=" flex min-w-[150px] max-w-[500px] flex-col rounded-2xl bg-[#282A2C] pb-4 text-[#E3E3E3] md:min-w-[400px]">
           <div className="relative mt-5 flex flex-col items-center space-y-3">
             <p className="text-sm">
               {isAuthenticated ? userEmail : "haveagoodday@gmail.com"}
@@ -79,13 +176,33 @@ const LogoutCard = ({ show, setShow, logoutBarRef, handleLogin }) => {
             <div className="relative">
               <img
                 className="h-20 w-20 rounded-full"
-                src={assets.Professional_User}
+                src={fileUrl}
                 alt="Professional User"
               />
-              <EditOutlined
-                className="absolute left-[52px] top-[60px] cursor-pointer rounded-full bg-black p-1"
-                style={{ width: "24px", height: "24px" }}
-              />
+              {isAuthenticated && (
+                <>
+                  <EditOutlined
+                    className="absolute left-[52px] top-[60px] cursor-pointer rounded-full bg-black p-1"
+                    style={{ width: "24px", height: "24px" }}
+                    onClick={handleClick} // Call handleClick on icon click
+                  />
+                  <input
+                    type="file"
+                    style={{ display: "none" }} // Hide the file input
+                    ref={fileInputRef} // Attach the ref to the hidden file input
+                    onChange={handleFileChange} // Call handleFileChange on file selection
+                  />
+                  <FileModal
+                    show={showModal} // Control the modal visibility
+                    onClose={handleCloseModal} // Handle modal close action
+                    onConfirm={handleUpload} // Handle file upload action
+                    file={file} // Pass the selected file to the modal
+                  />
+                  {uploadStatus && (
+                    <p className="mt-2 text-gray-700">{uploadStatus}</p>
+                  )}
+                </>
+              )}
             </div>
 
             {!isAuthenticated && (
@@ -101,7 +218,7 @@ const LogoutCard = ({ show, setShow, logoutBarRef, handleLogin }) => {
                 </button>
 
                 <Modal
-                  open={open}
+                  open
                   onClose={() => setSignup(!signup)}
                   aria-labelledby="modal-modal-title"
                   aria-describedby="modal-modal-description"

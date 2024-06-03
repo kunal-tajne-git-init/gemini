@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import authService from "../../appwrite/auth";
 import { assets } from "../../assets/assets";
 import Input from "./Input";
@@ -26,7 +26,28 @@ function Login({ setLogin }) {
           dispatch(authLogin(userData));
           const name = userData?.name;
           const email = userData?.email;
-          dispatch(setUserDetails({ name, email }));
+
+          const userDetails = JSON.parse(
+            localStorage.getItem(email + "userDetails"),
+          );
+          if (userDetails.hasProfile)
+            dispatch(
+              setUserDetails({
+                name,
+                email,
+                hasProfile: userDetails.hasProfile,
+                fileId: userDetails.fileId,
+              }),
+            );
+          else
+            dispatch(
+              setUserDetails({
+                name,
+                email,
+                hasProfile: false,
+                fileId: "665cfb3f00312139e5ee",
+              }),
+            );
         }
 
         navigate("/");

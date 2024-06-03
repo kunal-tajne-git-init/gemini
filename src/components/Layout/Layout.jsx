@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { assets } from "../../assets/assets";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -20,7 +20,7 @@ import {
 import LogoutCard from "../User/LogoutCard";
 import authService from "../../appwrite/auth";
 import { useDispatch, useSelector } from "react-redux";
-import { setInitialState, setUserDetails } from "../../store/userDetailsSlice";
+import { setInitialState } from "../../store/userDetailsSlice";
 
 // Function to shuffle an array
 const shuffleArray = (array) => {
@@ -51,13 +51,12 @@ const Layout = () => {
 
   const [show, setShow] = useState(true);
   const [updateBar, setUpdateBar] = useState(true);
+  const [fileId, setFileId] = useState();
   // const [userDetails, setUserDetails] = useState(null);
   const dispatch = useDispatch();
 
-  const logoutBarRef = useRef();
-
   const { isAuthenticated } = useSelector((state) => state.auth);
-  const userName = useSelector((state) => state.userDetails.userName);
+  // const userName = useSelector((state) => state.userDetails.userName);
   const [currUserName, setCurrUserName] = useState("Explorer!");
 
   const {
@@ -73,31 +72,59 @@ const Layout = () => {
     setDisplayButton,
     setDisplayLogout,
     displayLogout,
+    fileUrl,
+    setFileUrl,
   } = useContext(ApiContext);
 
   useEffect(() => {
     const fetchUserDetails = async () => {
-      const user = await authService.getCurrentUser();
+      // const user = await authService.getCurrentUser();
       const userLocal = localStorage.getItem("user");
 
       if (userLocal) {
         const userLocalData = JSON.parse(userLocal);
-        const { name, email } = userLocalData;
-        console.log("Data", name, email);
-        dispatch(setAuthState({ isAuthenticated: true, user: userLocalData }));
-        dispatch(setInitialState({ name, email }));
-      } else if (user) {
-        dispatch(login(user));
-        const user = await authService.getUserDetails();
-        dispatch(setUserDetails(user?.name, user?.email));
+        const currUserData = JSON.parse(
+          localStorage.getItem(userLocalData.email + "userDetails"),
+        );
+
+        if (currUserData) {
+          const { name, email, hasProfile, fileId } = currUserData;
+          setFileId(fileId);
+          setFileUrl(
+            `https://cloud.appwrite.io/v1/storage/buckets/665a6f08001eafd6e54b/files/${fileId}/view?project=665a6b2000327e024ac1`,
+          );
+
+          setCurrUserName(name);
+
+          console.log("Data", currUserData);
+          dispatch(
+            setAuthState({ isAuthenticated: true, user: userLocalData }),
+          );
+          dispatch(setInitialState({ name, email, hasProfile, fileId }));
+        }
+      } else {
+        setCurrUserName("Explorer!");
       }
+      // else if (user) {
+      //   dispatch(login(user));
+      //   const user = await authService.getUserDetails();
+      //   dispatch(setUserDetails(user?.name, user?.email));
+      // }
     };
     fetchUserDetails();
-  }, []);
+  }, [dispatch, setCurrUserName, setFileId, setFileUrl, isAuthenticated]);
 
-  useEffect(() => {
-    setCurrUserName(userName);
-  }, [isAuthenticated, userName]);
+  // useEffect(() => {
+  //   setCurrUserName(userName);
+  // }, [isAuthenticated, userName]);
+
+  // const handleInput = () => {
+  //   console.log("Input", input);
+  //   if (input) {
+  //     onSent(input);
+  //     setDisplayButton(false);
+  //   }
+  // };
 
   const handleLogin = async () => {
     const user = await authService.login();
@@ -107,13 +134,6 @@ const Layout = () => {
   const handleLogout = () => {
     authService.logout();
     dispatch(logout());
-  };
-
-  const handleRef = () => {
-    if (logoutBarRef.current) {
-      // Example: Change the text of the button
-      logoutBarRef.current.textContent = "Logout";
-    }
   };
 
   return (
@@ -141,7 +161,7 @@ const Layout = () => {
           <div className="relative">
             <img
               className="h-10 w-10 rounded-full"
-              src={assets.Professional_User}
+              src={fileUrl}
               alt="Professional User"
               onClick={() => setDisplayLogout(!displayLogout)}
             />
@@ -152,9 +172,10 @@ const Layout = () => {
                   isAuthenticated={!isAuthenticated}
                   setShow={setShow}
                   show={show}
-                  logoutBarRef={logoutBarRef}
                   handleLogin={handleLogin}
                   handleLogout={handleLogout}
+                  fileId={fileId}
+                  setFileId={setFileId}
                 />
               </div>
             )}
@@ -207,15 +228,7 @@ const Layout = () => {
                       key={index}
                       className="max-w-[200px] text-white"
                     >
-                      <Card
-                        message={card.message}
-                        Icon={card.Icon}
-                        onClick={() => {
-                          onSent(card.message);
-                          setDisplayButton(false);
-                          return;
-                        }}
-                      />
+                      <Card message={card.message} Icon={card.Icon} />
                     </SwiperSlide>
                   ))}
                 </Swiper>
@@ -229,7 +242,7 @@ const Layout = () => {
                 <div className="flex items-center gap-4 ">
                   <img
                     className="h-12 w-12 rounded-full"
-                    src={assets.Professional_User}
+                    src={fileUrl}
                     alt=""
                   />
                   <p>{recentPrompt}</p>

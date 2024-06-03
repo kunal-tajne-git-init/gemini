@@ -3,6 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   userName: "Explorer",
   userEmail: "haveagoodday@gmail.com",
+  fileId: "",
+  hasProfile: false,
 };
 
 const userDetailsSlice = createSlice({
@@ -12,16 +14,24 @@ const userDetailsSlice = createSlice({
     setUserDetails(state, action) {
       state.userName = action.payload.name;
       state.userEmail = action.payload.email;
-      localStorage.setItem("userDetails", JSON.stringify(action.payload));
+      state.fileId = action.payload.fileId;
+      state.hasProfile = action.payload?.hasProfile;
+      localStorage.setItem(
+        state.userEmail + "userDetails",
+        JSON.stringify(action.payload),
+      );
     },
     resetUserDetails(state) {
       state.userName = "Explorer";
       state.userEmail = "haveagoodday@gmail.com";
-      localStorage.removeItem("userDetails");
+      state.fileId = "665cfb3f00312139e5ee";
+      state.hasProfile = false;
     },
     setInitialState(state, action) {
       state.userName = action.payload.name;
       state.userEmail = action.payload.email;
+      state.fileId = action.payload.fileId;
+      state.hasProfile = action.payload.hasProfile;
     },
   },
 });
