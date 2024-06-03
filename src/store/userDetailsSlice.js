@@ -33,6 +33,13 @@ const userDetailsSlice = createSlice({
       state.fileId = action.payload.fileId;
       state.hasProfile = action.payload.hasProfile;
     },
+
+    setLocalStorage(state, action) {
+      localStorage.setItem(
+        state.userEmail + "userDetails",
+        JSON.stringify(action.payload),
+      );
+    },
   },
 });
 

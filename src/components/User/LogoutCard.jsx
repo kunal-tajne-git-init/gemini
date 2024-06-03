@@ -27,6 +27,7 @@ import FileModal from "./FileModal.jsx";
 import {
   setUserDetails,
   resetUserDetails,
+  setLocalStorage,
 } from "../../store/userDetailsSlice.js";
 import conf from "../../conf/conf.js";
 
@@ -83,6 +84,16 @@ const LogoutCard = ({ show, setShow, handleLogin, fileId, setFileId }) => {
               hasProfile: true,
             }),
           );
+
+          dispatch(
+            setLocalStorage({
+              name: userName,
+              email: userEmail,
+              fileId: currFileId,
+              hasProfile: true,
+            }),
+          );
+
           // Check if the response is valid
           setUploadStatus("Upload successful!"); // Update the status to "Upload successful!"
           setShowModal(false);
