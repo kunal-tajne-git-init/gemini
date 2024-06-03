@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import authService from "../../appwrite/auth";
 import { assets } from "../../assets/assets";
 import Input from "./Input";

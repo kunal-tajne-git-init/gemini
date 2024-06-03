@@ -43,6 +43,10 @@ const userDetailsSlice = createSlice({
   },
 });
 
-export const { setUserDetails, resetUserDetails, setInitialState } =
-  userDetailsSlice.actions;
+export const {
+  setUserDetails,
+  resetUserDetails,
+  setInitialState,
+  setLocalStorage,
+} = userDetailsSlice.actions;
 export default userDetailsSlice.reducer;
