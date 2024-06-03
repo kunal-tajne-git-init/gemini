@@ -48,6 +48,11 @@ const Signup = ({ setSignup, setLogin, loginDialogue }) => {
               fileId: "665cfb3f00312139e5ee",
             }),
           );
+
+          localStorage.setItem(
+            email + "userDetails",
+            JSON.stringify(currUserData),
+          );
         }
 
         // console.log(currUserData);
