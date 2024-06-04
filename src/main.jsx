@@ -4,21 +4,22 @@ import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./store/store.js";
+import LoginFailed from "./components/LoginFailed.jsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
     children: [
-      {
-        path: "/",
-        element: <App />,
-      },
-      {
-        path: "/about",
-        element: <App />,
-      },
+      // {
+      //   path: "/",
+      //   element: <App />,
+      // },
     ],
+  },
+  {
+    path: "login-failed",
+    element: <LoginFailed />,
   },
 ]);
 

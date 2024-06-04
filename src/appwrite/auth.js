@@ -1,6 +1,6 @@
 /* eslint-disable no-useless-catch */
 import conf from "../conf/conf.js";
-import { Client, Account, ID } from "appwrite";
+import { Client, Account, ID, OAuthProvider } from "appwrite";
 
 export class AuthService {
   client = new Client();
@@ -73,6 +73,65 @@ export class AuthService {
       return true;
     } catch (error) {
       console.log("Appwrite serive :: logout :: error", error);
+    }
+  }
+
+  // async googleLogin() {
+  //   try {
+  //     const res = await this.account.createOAuth2Session(
+  //       OAuthProvider.Google,
+  //       "http://localhost:5173",
+  //       "http://localhost:5173",
+  //       [
+  //         "https://www.googleapis.com/auth/userinfo.email",
+  //         "https://www.googleapis.com/auth/userinfo.profile",
+  //         "openid",
+  //       ],
+  //     );
+
+  //     const userInfo = JSON.parse(res);
+
+  //     console.log("Appwrite serive :: googleLogin :: res", userInfo);
+  //     console.log("Appwrite serive :: googleLogin :: res", res);
+
+  //     return res;
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
+  async googleLogin() {
+    try {
+      this.account.createOAuth2Session(
+        OAuthProvider.Google,
+        "https://geminibykunaltajne.vercel.app/",
+        "https://geminibykunaltajne.vercel.app/loginfailed",
+        [
+          "https://www.googleapis.com/auth/userinfo.email",
+          "https://www.googleapis.com/auth/userinfo.profile",
+          "openid",
+        ],
+      );
+
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  async getGoogleUser() {
+    try {
+      const session = await this.account.getSession("current");
+
+      const accessToken = session.providerAccessToken;
+      const url =
+        "https://www.googleapis.com/oauth2/v1/userinfo?access_token=" +
+        accessToken +
+        "";
+
+      return fetch(url).then((response) => response.json());
+    } catch (error) {
+      console.log("Appwrite serive :: getGoogleUser :: error", error);
+      return false;
     }
   }
 }

@@ -80,7 +80,6 @@ const Layout = () => {
     const fetchUserDetails = async () => {
       // const user = await authService.getCurrentUser();
       const userLocal = localStorage.getItem("user");
-
       if (userLocal) {
         const userLocalData = JSON.parse(userLocal);
         const currUserData = JSON.parse(
@@ -103,6 +102,29 @@ const Layout = () => {
           );
           dispatch(setInitialState({ name, email, hasProfile, fileId }));
         }
+      } else if (!isAuthenticated) {
+        console.log("Here", isAuthenticated);
+        const userData = await authService.getGoogleUser();
+
+        if (!userData) return;
+
+        const { name: userName, email: userEmail, picture } = userData;
+
+        setFileUrl(picture);
+
+        console.log("User Name", userName);
+        console.log("User Email", picture);
+
+        dispatch(setAuthState({ isAuthenticated: true, user: userData }));
+        dispatch(
+          setInitialState({
+            name: userName,
+            email: userEmail,
+            googlePictureUrl: picture,
+            hasProfile: true,
+            isGoogleLoggedIn: true,
+          }),
+        );
       }
     };
     fetchUserDetails();

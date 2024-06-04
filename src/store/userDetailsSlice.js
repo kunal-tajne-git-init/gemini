@@ -5,6 +5,7 @@ const initialState = {
   userEmail: "haveagoodday@gmail.com",
   fileId: "665cfb3f00312139e5ee",
   hasProfile: false,
+  isGoogleLoggedIn: false,
 };
 
 const userDetailsSlice = createSlice({
@@ -16,6 +17,7 @@ const userDetailsSlice = createSlice({
       state.userEmail = action.payload.email;
       state.fileId = action.payload.fileId;
       state.hasProfile = action.payload?.hasProfile;
+      state.isGoogleLoggedIn = action.payload?.isGoogleLoggedIn;
       // localStorage.setItem(
       //   state.userEmail + "userDetails",
       //   JSON.stringify(action.payload),
@@ -26,6 +28,7 @@ const userDetailsSlice = createSlice({
       state.userEmail = "haveagoodday@gmail.com";
       state.fileId = "665cfb3f00312139e5ee";
       state.hasProfile = false;
+      state.isGoogleLoggedIn = false;
     },
     setInitialState(state, action) {
       state.userName = action.payload.name;

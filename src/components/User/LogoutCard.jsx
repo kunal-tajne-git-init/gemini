@@ -3,6 +3,7 @@ import { assets } from "../../assets/assets";
 import { Modal } from "@mui/base/Modal";
 import { logout } from "../../store/authSlice";
 import profileStorageService from "../../appwrite/storage.js";
+import { Google } from "@mui/icons-material";
 
 import {
   Accordion,
@@ -48,8 +49,10 @@ const LogoutCard = ({ show, setShow, handleLogin }) => {
   const { hasProfile } = useSelector((state) => state.userDetails);
   const { isAuthenticated } = useSelector((state) => state.auth);
 
-  const userName = useSelector((state) => state.userDetails.userName);
-  const userEmail = useSelector((state) => state.userDetails.userEmail);
+  const { userName, userEmail, isGoogleLoggedIn } = useSelector(
+    (state) => state.userDetails,
+  );
+  // const userEmail = useSelector((state) => state.userDetails.userEmail);
 
   const fileInputRef = useRef(); // Ref to the hidden file input
 
@@ -113,6 +116,18 @@ const LogoutCard = ({ show, setShow, handleLogin }) => {
 
   const handleClick = () => {
     fileInputRef.current.click();
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      const isLoggedIn = authService.googleLogin();
+
+      if (isLoggedIn) {
+        dispatch(login());
+      }
+    } catch (error) {
+      console.error("Error logging in with Google:", error);
+    }
   };
 
   const handleCloseModal = () => {
@@ -193,11 +208,13 @@ const LogoutCard = ({ show, setShow, handleLogin }) => {
               />
               {isAuthenticated && (
                 <>
-                  <EditOutlined
-                    className="absolute left-[52px] top-[60px] cursor-pointer rounded-full bg-black p-1"
-                    style={{ width: "24px", height: "24px" }}
-                    onClick={handleClick} // Call handleClick on icon click
-                  />
+                  {isGoogleLoggedIn && (
+                    <EditOutlined
+                      className="absolute left-[52px] top-[60px] cursor-pointer rounded-full bg-black p-1"
+                      style={{ width: "24px", height: "24px" }}
+                      onClick={handleClick} // Call handleClick on icon click
+                    />
+                  )}
                   <input
                     type="file"
                     style={{ display: "none" }} // Hide the file input
@@ -246,6 +263,13 @@ const LogoutCard = ({ show, setShow, handleLogin }) => {
                     )}
                   </Box>
                 </Modal>
+              </div>
+            )}
+
+            {!isAuthenticated && (
+              <div className="flex items-center gap-2 rounded-xl border-4 border-blue-500 bg-white px-5 py-[4px] text-lg font-semibold text-black">
+                <Google />
+                <button onClick={handleGoogleLogin}>Login with Google</button>
               </div>
             )}
 
