@@ -103,7 +103,7 @@ export class AuthService {
     try {
       this.account.createOAuth2Session(
         OAuthProvider.Google,
-        "https://geminibykunaltajne.vercel.app/",
+        "https://geminibykunaltajne.vercel.app",
         "https://geminibykunaltajne.vercel.app/loginfailed",
         [
           "https://www.googleapis.com/auth/userinfo.email",
